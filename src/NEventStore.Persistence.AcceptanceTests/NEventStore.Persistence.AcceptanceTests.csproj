@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{49C544AF-02FB-4BE9-BDDF-79EB087E00C3}</ProjectGuid>
+    <ProjectGuid>{3FE594FE-16FF-4405-97D5-5A58FB12520B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NEventStore.Persistence.MongoDB.Tests</RootNamespace>
-    <AssemblyName>NEventStore.Persistence.MongoDB.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>NEventStore.Persistence.AcceptanceTests</RootNamespace>
+    <AssemblyName>NEventStore.Persistence.AcceptanceTests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -35,13 +35,19 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\packages\FluentAssertions.3.3.0\lib\net40\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions.Core">
+      <HintPath>..\packages\FluentAssertions.3.3.0\lib\net40\FluentAssertions.Core.dll</HintPath>
+    </Reference>
     <Reference Include="NEventStore, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NEventStore.5.1.1\lib\net40\NEventStore.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -56,25 +62,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\dependencies\NEventStore\src\NEventStore.Persistence.AcceptanceTests\PersistenceTests.cs">
-      <Link>AcceptanceTests\PersistenceTests.cs</Link>
-    </Compile>
-    <Compile Include="AcceptanceTestMongoPersistenceFactory.cs" />
-    <Compile Include="AcceptanceTests\OptimisticLoopTests.cs" />
-    <Compile Include="AcceptanceTests\PersistenceEngineFixture.cs" />
-    <Compile Include="AcceptanceTests\SharedPersistenceTests.cs" />
-    <Compile Include="AcceptanceTests\Issues\Issue8.cs" />
+    <Compile Include="BDD\SpecificationBase.cs" />
+    <Compile Include="BDD\SpecificationBaseRunner.cs" />
+    <Compile Include="Catch.cs" />
+    <Compile Include="ConfigurationExtensions.cs" />
+    <Compile Include="EnviromentConnectionFactory.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NEventStore.Persistence.AcceptanceTests\NEventStore.Persistence.AcceptanceTests.csproj">
-      <Project>{3fe594fe-16ff-4405-97d5-5a58fb12520b}</Project>
-      <Name>NEventStore.Persistence.AcceptanceTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NEventStore.Persistence.MongoDB\NEventStore.Persistence.MongoDB.csproj">
-      <Project>{32ADD8CE-0F3F-41D8-BFA1-6E5D685E64DD}</Project>
-      <Name>NEventStore.Persistence.MongoDB</Name>
-    </ProjectReference>
+    <Compile Include="SimpleMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
