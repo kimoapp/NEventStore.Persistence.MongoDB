@@ -316,8 +316,19 @@
                             throw;
                         }
 
+                        //---------------------------
+                        //Kimo Fork: Begin
+                        //---------------------------
+
                         // checkpoint index? 
-                        if (e.Message.Contains(MongoCommitIndexes.CheckpointNumber))
+                        bool isCheckpointIndexForMongo2 = e.Message.Contains(MongoCommitIndexes.CheckpointNumber); //"WriteConcern detected an error 'insertDocument :: caused by :: 11000 E11000 duplicate key error index: neventstore-persistance.Commits.$_id_  dup key: { : 1 }'. (Response was { \"ok\" : 1, \"code\" : 11000, \"err\" : \"insertDocument :: caused by :: 11000 E11000 duplicate key error index: neventstore-persistance.Commits.$_id_  dup key: { : 1 }\", \"n\" : NumberLong(0) })."
+                        bool isCheckpointIndexForMongo3 = e.Message.Contains("index: _id_"); //"WriteConcern detected an error 'E11000 duplicate key error collection: neventstore-persistance.Commits index: _id_ dup key: { : 1 }'. (Response was { \"ok\" : 1, \"code\" : 11000, \"err\" : \"E11000 duplicate key error collection: neventstore-persistance.Commits index: _id_ dup key: { : 1 }\", \"n\" : NumberLong(0) })."
+                        bool isCheckpointIndex = isCheckpointIndexForMongo2 || isCheckpointIndexForMongo3;
+
+                        if (isCheckpointIndex)
+                        //---------------------------
+                        //Kimo Fork: End
+                        //---------------------------
                         {
                             commitDoc[MongoCommitFields.CheckpointNumber] = _getNextCheckpointNumber().LongValue;
                         }

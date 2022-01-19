@@ -1,4 +1,6 @@
-﻿namespace NEventStore.Persistence.MongoDB
+﻿using MongoDB.Bson.Serialization;
+
+namespace NEventStore.Persistence.MongoDB
 {
     using System;
     using System.Collections.Generic;
@@ -16,14 +18,30 @@
     {
         public static Dictionary<Tkey, Tvalue> AsDictionary<Tkey, Tvalue>(this BsonValue bsonValue)
         {
-            using (BsonReader reader = BsonReader.Create(bsonValue.ToJson()))
+            //---------------------------
+            //Kimo Fork: Begin
+            //---------------------------
+
+            //using (BsonReader reader = BsonReader.Create(bsonValue.ToJson()))
+            //{
+            //    var dictionarySerializer = new DictionarySerializer<Tkey, Tvalue>();
+            //    object result = dictionarySerializer.Deserialize(reader,
+            //        typeof(Dictionary<Tkey, Tvalue>),
+            //        new DictionarySerializationOptions());
+            //    return (Dictionary<Tkey, Tvalue>)result;
+            //}
+
+            using (BsonReader reader = new JsonReader(bsonValue.ToJson()))
             {
-                var dictionarySerializer = new DictionarySerializer<Tkey, Tvalue>();
-                object result = dictionarySerializer.Deserialize(reader,
-                    typeof(Dictionary<Tkey, Tvalue>),
-                    new DictionarySerializationOptions());
+                var dictionarySerializer = new CustomDictionarySerializer<Tkey, Tvalue>();
+                var context = BsonDeserializationContext.CreateRoot(reader: reader, configurator: null);
+                object result = dictionarySerializer.Deserialize(context, new BsonDeserializationArgs());
                 return (Dictionary<Tkey, Tvalue>)result;
             }
+
+            //---------------------------
+            //Kimo: End
+            //---------------------------
         }
 
         public static BsonDocument ToMongoCommit(this CommitAttempt commit, LongCheckpoint checkpoint, IDocumentSerializer serializer)
@@ -36,7 +54,14 @@
                     new BsonDocument
                     {
                         {MongoCommitFields.StreamRevision, streamRevision++},
-                        {MongoCommitFields.Payload, new BsonDocumentWrapper(typeof (EventMessage), serializer.Serialize(e))}
+                        //---------------------------
+                        //Kimo Fork: Begin
+                        //---------------------------
+                        //{MongoCommitFields.Payload, new BsonDocumentWrapper(typeof (EventMessage), serializer.Serialize(e))}
+                        {MongoCommitFields.Payload, new BsonDocumentWrapper(serializer.Serialize(e))} //Upgraded to Mongo C# Driver 2.x. If needed, a serializer can be obtained from BsonSerializer.LookupSerializer(typeof(EventMessage));
+                        //---------------------------
+                        //Kimo Fork: End
+                        //---------------------------
                     });
             return new BsonDocument
             {
@@ -174,4 +199,22 @@
                     );
         }
     }
+
+    //---------------------------
+    //Kimo Fork: Begin
+    //---------------------------
+
+    public class CustomDictionarySerializer<TKey, TValue>
+        : DictionarySerializerBase<Dictionary<TKey, TValue>, TKey, TValue>
+    {
+        [Obsolete]
+        protected override Dictionary<TKey, TValue> CreateInstance()
+        {
+            return new Dictionary<TKey, TValue>();
+        }
+    }
+
+    //---------------------------
+    //Kimo Fork: End
+    //---------------------------
 }
