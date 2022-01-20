@@ -7,7 +7,7 @@ properties {
 	$packages_directory = "$src_directory\packages"
 	$sln_file = "$src_directory\NEventStore.Persistence.MongoDB.sln"
 	$target_config = "Release"
-	$framework_version = "v4.0"
+	$framework_version = "v4.7.2"
 	$version = "0.0.0.0"
 
 	$xunit_path = "$base_directory\bin\xunit.runners.1.9.1\tools\xunit.console.clr4.exe"
@@ -48,7 +48,7 @@ task UpdateVersion {
 task Compile {
 	EnsureDirectory $output_directory
 	exec { msbuild /nologo /verbosity:quiet $sln_file /p:Configuration=$target_config /t:Clean }
-	exec { msbuild /nologo /verbosity:quiet $sln_file /p:Configuration=$target_config /p:TargetFrameworkVersion=v4.0 }
+	exec { msbuild /nologo /verbosity:quiet $sln_file /p:Configuration=$target_config /p:TargetFrameworkVersion=v4.7.2 }
 }
 
 task Test -precondition { $runPersistenceTests } {
